@@ -1,0 +1,250 @@
+{
+  "project_name": "SwasthSewa Call Centre AI Triage Console",
+  "app_type": "dashboard",
+  "archetype": "Swiss Clinical Tactical & High-Contrast Operator Dashboard",
+  "target_audience": "Call centre operators, health dispatch agents, medical triage supervisors",
+  "design_principles": [
+    "Fusion over Imitation: Combine clinical urgency indicators with clean Swiss grid efficiency and modern developer API black-box tools",
+    "Emotion First: Calm clarity under pressure. High-contrast urgency badges prevent mistakes during emergency calls",
+    "Content & Narrative First: Real-time caller intake transitions effortlessly into AI reasoning, red flags, and nearby facility routing",
+    "Negative Space & Dense Clarity: High information density with crisp 1px borders, avoiding cramped, illegible forms",
+    "Contrast & Accessibility: APCA/WCAG compliant contrast for all urgency levels (Emergency, Urgent, Routine, Self-care)"
+  ],
+  "typography": {
+    "font_family_headings": "Plus Jakarta Sans, sans-serif",
+    "font_family_body": "Inter, system-ui, sans-serif",
+    "font_family_mono": "JetBrains Mono, monospace",
+    "font_sources": [
+      "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    ],
+    "scale": {
+      "h1_hero": "text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight",
+      "h2_section": "text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight",
+      "h3_card": "text-lg sm:text-xl font-semibold tracking-normal",
+      "sub_heading": "text-sm sm:text-base font-medium text-slate-500 dark:text-slate-400",
+      "body": "text-sm sm:text-base font-normal leading-relaxed",
+      "caption_label": "text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400",
+      "code_mono": "font-mono text-xs sm:text-sm tracking-tight"
+    }
+  },
+  "colors": {
+    "forbidden_colors": ["#1B93A4", "#7351B7"],
+    "theme_mode": "System / Dual Light & Dark Mode with crisp high contrast",
+    "background": {
+      "primary": "bg-slate-50 dark:bg-slate-950",
+      "surface": "bg-white dark:bg-slate-900",
+      "surface_elevated": "bg-slate-100/80 dark:bg-slate-800/80",
+      "header_glass": "backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800"
+    },
+    "text": {
+      "primary": "text-slate-900 dark:text-slate-50",
+      "secondary": "text-slate-600 dark:text-slate-400",
+      "muted": "text-slate-400 dark:text-slate-500",
+      "inverse": "text-white dark:text-slate-900"
+    },
+    "brand_primary": {
+      "default": "bg-indigo-600 hover:bg-indigo-700 text-white",
+      "ring": "ring-indigo-500",
+      "accent_text": "text-indigo-600 dark:text-indigo-400"
+    },
+    "urgency_levels": {
+      "Emergency": {
+        "badge": "bg-red-100 text-red-800 dark:bg-red-950/80 dark:text-red-300 border border-red-300 dark:border-red-800",
+        "bg_glow": "bg-red-500/10",
+        "border": "border-red-500",
+        "icon_color": "text-red-600 dark:text-red-400",
+        "label": "EMERGENCY (Immediate Action / Call 108)"
+      },
+      "Urgent": {
+        "badge": "bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800",
+        "bg_glow": "bg-amber-500/10",
+        "border": "border-amber-500",
+        "icon_color": "text-amber-600 dark:text-amber-400",
+        "label": "URGENT (Care within 2-4 hours)"
+      },
+      "Routine": {
+        "badge": "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800",
+        "bg_glow": "bg-emerald-500/10",
+        "border": "border-emerald-500",
+        "icon_color": "text-emerald-600 dark:text-emerald-400",
+        "label": "ROUTINE (Visit Dispensary / Doctor today)"
+      },
+      "Self-care": {
+        "badge": "bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-300 dark:border-sky-800",
+        "bg_glow": "bg-sky-500/10",
+        "border": "border-sky-500",
+        "icon_color": "text-sky-600 dark:text-sky-400",
+        "label": "SELF-CARE (Home guidance & monitoring)"
+      }
+    }
+  },
+  "layout_architecture": {
+    "navigation_tabs": [
+      {
+        "id": "triage-console",
+        "label": "Live Call Intake & Triage",
+        "icon": "PhoneCall",
+        "description": "Caller intake form, real-time LLM triage, red-flag alert, nearest facility routing"
+      },
+      {
+        "id": "case-logs",
+        "label": "Case Call Logs",
+        "icon": "FileText",
+        "description": "Historical log of calls, status filter by urgency, exportable records"
+      },
+      {
+        "id": "facility-directory",
+        "label": "Facility Directory",
+        "icon": "Building2",
+        "description": "Searchable database of hospitals & dispensaries, CSV import & location mapping"
+      },
+      {
+        "id": "developer-api",
+        "label": "API Docs & Black-Box Playground",
+        "icon": "Code2",
+        "description": "Integration REST API endpoint contract, JSON payload tester, cURL examples"
+      }
+    ],
+    "header_bar": {
+      "elements": [
+        "Brand Logo 'SwasthSewa Triage AI'",
+        "Live Call Center Agent Status (Active / On-Call / Away)",
+        "Language intake helper indicator (English / Hindi / Hinglish)",
+        "Quick Emergency Banner (108 Helpline direct trigger)",
+        "Dark/Light Mode Toggle"
+      ]
+    }
+  },
+  "key_features_and_components": {
+    "intake_form": {
+      "fields": [
+        "Caller Full Name (Text)",
+        "Phone Number (Tel / 10 digit Indian number format)",
+        "Age (Number) & Sex (Male / Female / Other)",
+        "Language Mode (English, Hindi, Hinglish notes)",
+        "Primary Symptom Notes (Textarea with voice simulation presets)",
+        "Duration of Symptom (Dropdown: <2 hrs, 1 day, 2-3 days, 1 week+)",
+        "Severity Scale (1 to 10 visual selector)",
+        "Location: City (Select / Input) & Pincode (6-digit input with autocomplete)",
+        "Optional GPS Coordinates (Latitude & Longitude auto-fill button)"
+      ],
+      "quick_presets": [
+        {
+          "title": "Severe Chest Pain (Hindi/Hinglish)",
+          "preset_data": {
+            "name": "Ramesh Kumar",
+            "age": 48,
+            "sex": "Male",
+            "phone": "9876543210",
+            "symptoms": "Bohot tej chhati me dard ho raha hai aur baayein haath me jhanjhanahat hai. Pasina bhi aa raha hai.",
+            "duration": "30 mins",
+            "severity": 9,
+            "city": "New Delhi",
+            "pincode": "110001",
+            "latitude": 28.6139,
+            "longitude": 77.209
+          }
+        },
+        {
+          "title": "High Fever & Cough (Workers Camp)",
+          "preset_data": {
+            "name": "Sunita Devi",
+            "age": 32,
+            "sex": "Female",
+            "phone": "9811223344",
+            "symptoms": "Do din se tej bukhar hai aur sookhi khansi hai. Badan dard bhi hai.",
+            "duration": "2 days",
+            "severity": 6,
+            "city": "Mumbai",
+            "pincode": "400017",
+            "latitude": 19.04,
+            "longitude": 72.85
+          }
+        },
+        {
+          "title": "Minor Cut / Skin Rash (Dispensary)",
+          "preset_data": {
+            "name": "Arjun Singh",
+            "age": 26,
+            "sex": "Male",
+            "phone": "9711002233",
+            "symptoms": "Hath me choti si kharash aayi hai kaam ke waqt. Thoda khoon nikla par ab ruk gaya.",
+            "duration": "1 hour",
+            "severity": 3,
+            "city": "Bengaluru",
+            "pincode": "560001",
+            "latitude": 12.9716,
+            "longitude": 77.5946
+          }
+        }
+      ]
+    },
+    "ai_triage_panel": {
+      "components": [
+        "Urgency Level Badge with visual glow (Emergency / Urgent / Routine / Self-care)",
+        "Clinical Reasoning Summary (Generated by LLM black box)",
+        "Red-Flag Warning Indicators (Alert list with bullet points)",
+        "Recommended Facility Type (Tertiary Care / CHC / Primary Dispensary / Pharmacy)",
+        "Disclaimer Notice: 'System provides triage sorting & location guidance; not direct medical diagnosis.'"
+      ]
+    },
+    "facility_locator_panel": {
+      "components": [
+        "Sorted list of nearest facilities by distance (in km)",
+        "Facility Badge (Government Hospital / CHC / Mohalla Clinic / Private Dispensary)",
+        "Operating Hours & Emergency ER Availability Status",
+        "Direct Contact Phone & One-Click Directions Link (Google Maps format)",
+        "SMS / WhatsApp Dispatch Button (Send facility address directly to caller's phone)"
+      ]
+    },
+    "developer_api_panel": {
+      "components": [
+        "Black-Box API Endpoint Documentation (`POST /api/triage`)",
+        "Interactive Request Payload JSON Editor",
+        "Live Response Payload Viewer with syntax highlighting",
+        "Copy cURL snippet generator",
+        "Response Time & Token Latency Metric Display"
+      ]
+    }
+  },
+  "testing_and_data_attributes": {
+    "required_data_testids": [
+      "nav-tab-triage-console",
+      "nav-tab-case-logs",
+      "nav-tab-facility-directory",
+      "nav-tab-developer-api",
+      "intake-form-caller-name",
+      "intake-form-phone",
+      "intake-form-age",
+      "intake-form-sex",
+      "intake-form-symptoms",
+      "intake-form-severity-slider",
+      "intake-form-city",
+      "intake-form-pincode",
+      "intake-form-submit-button",
+      "intake-preset-chest-pain",
+      "intake-preset-fever",
+      "intake-preset-minor-cut",
+      "triage-urgency-badge",
+      "triage-reasoning-text",
+      "triage-red-flags-list",
+      "triage-recommended-facility",
+      "facility-card-item",
+      "facility-send-sms-button",
+      "case-log-table",
+      "case-log-filter-urgency",
+      "facility-import-csv-button",
+      "api-playground-send-request",
+      "api-playground-curl-output"
+    ]
+  },
+  "universal_guidelines_for_main_agent": [
+    "Ensure all interactive elements have explicit data-testid attributes for automated testing.",
+    "Do NOT use pure #000000 or generic unstyled cards. Use clear 1px borders with subtle shadow.",
+    "Do NOT use #1B93A4 or #7351B7 as colors.",
+    "Provide Hindi and Hinglish voice intake simulation pre-fills to demonstrate real call centre usage in India.",
+    "Ensure high contrast for emergency badges so operators can read acuity levels instantly.",
+    "Use Sonner for toasts for dispatch notifications, copy events, and CSV imports.",
+    "Make sure the API black-box panel gives clear code examples (cURL, JavaScript, Python) showing how external applications consume the triage engine."
+  ]
+}
