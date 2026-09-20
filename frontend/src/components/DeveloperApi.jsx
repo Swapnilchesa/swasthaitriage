@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Copy, Loader2, Play } from "lucide-react";
+import { Copy, Loader2, Play, KeyRound, Gauge } from "lucide-react";
 import { toast } from "sonner";
-import { API, api } from "../lib/api";
+import { API, API_KEY, api } from "../lib/api";
 
 const SAMPLE = {
   caller_name: "Ramesh Kalita",
@@ -19,6 +19,7 @@ const SAMPLE = {
 };
 
 const ENDPOINTS = [
+  ["GET", "/api/", "Public liveness check — no key needed."],
   ["POST", "/api/triage", "Triage a complaint + return nearest facilities. The black box."],
   ["GET", "/api/facilities/nearest", "Facility routing only — lat/lng, pincode, city or district."],
   ["GET", "/api/facilities", "Search the ESIC / ESIS directory."],
@@ -35,6 +36,7 @@ export const DeveloperApi = () => {
 
   const curl = `curl -X POST ${API}/triage \\
   -H "Content-Type: application/json" \\
+  -H "X-API-Key: YOUR_API_KEY" \\
   -d '${body.replace(/\n\s*/g, " ")}'`;
 
   const send = async () => {
@@ -72,8 +74,40 @@ export const DeveloperApi = () => {
         <h2 className="text-xl font-bold sm:text-2xl">API endpoints</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Any of your applications can call these directly. Base URL:{" "}
-          <span className="mono text-primary/90">{API}</span>
+          <span className="mono text-primary">{API}</span>
         </p>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-border bg-secondary/40 p-4">
+            <p className="eyebrow mb-1.5 flex items-center gap-1.5">
+              <KeyRound className="h-3.5 w-3.5" /> Authentication
+            </p>
+            <p className="text-sm">
+              Every endpoint except <span className="mono text-xs">GET /api/</span> needs a header:
+            </p>
+            <p className="mono mt-2 break-all rounded border border-border bg-card px-2 py-1.5 text-xs">
+              X-API-Key: {API_KEY ? `${API_KEY.slice(0, 11)}…${API_KEY.slice(-4)}` : "not set"}
+            </p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              One key per calling app, set in the <span className="mono">API_KEYS</span> env var.
+              Remove a key there to revoke that app.
+            </p>
+          </div>
+          <div className="rounded-md border border-border bg-secondary/40 p-4">
+            <p className="eyebrow mb-1.5 flex items-center gap-1.5">
+              <Gauge className="h-3.5 w-3.5" /> Rate limits (per key)
+            </p>
+            <p className="text-sm">
+              <span className="mono">60</span> / min on triage &amp; CSV import,{" "}
+              <span className="mono">300</span> / min on read endpoints.
+            </p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Over the limit returns <span className="mono">429</span> with a{" "}
+              <span className="mono">Retry-After</span> header. Missing or wrong key returns{" "}
+              <span className="mono">401</span>.
+            </p>
+          </div>
+        </div>
         <div className="mt-4 divide-y divide-border/50">
           {ENDPOINTS.map(([m, p, d]) => (
             <div key={p} className="flex flex-wrap items-baseline gap-3 py-2.5">

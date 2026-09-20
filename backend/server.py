@@ -14,6 +14,7 @@ from fastapi import APIRouter, FastAPI, File, HTTPException, Query, UploadFile
 from motor.motor_asyncio import AsyncIOMotorClient
 from starlette.middleware.cors import CORSMiddleware
 
+from auth import KEYS_BY_DIGEST, read_guard, write_guard
 from geo import load_seed_facilities, nearest_facilities, resolve_location
 from models import (
     CaseRecord,
@@ -33,8 +34,15 @@ logger = logging.getLogger(__name__)
 client = AsyncIOMotorClient(os.environ["MONGO_URL"])
 db = client[os.environ["DB_NAME"]]
 
-app = FastAPI(title="Swasth Triage Sandbox API", version="1.0.0")
+app = FastAPI(title="Swasth Triage Sandbox API", version="1.1.0")
+app.state.db = db
+
+# Public: liveness only. Everything else needs an X-API-Key header.
 api_router = APIRouter(prefix="/api")
+# Writes / LLM calls — tighter per-key budget.
+write_router = APIRouter(prefix="/api", dependencies=[write_guard])
+# Read-only lookups — generous per-key budget.
+read_router = APIRouter(prefix="/api", dependencies=[read_guard])
 
 
 def new_case_ref() -> str:
@@ -57,6 +65,8 @@ async def seed_facilities():
         await db.facilities.insert_many([Facility(**r).to_mongo() for r in rows])
         logger.info("Seeded %s ESIC/ESIS facilities for Assam", len(rows))
     await db.cases.create_index("case_ref")
+    await db.rate_limits.create_index("expires_at", expireAfterSeconds=0)
+    logger.info("API key auth active for %s client(s)", len(KEYS_BY_DIGEST))
 
 
 @api_router.get("/")
@@ -66,10 +76,11 @@ async def root():
         "status": "ok",
         "model": f"{MODEL_PROVIDER}/{MODEL_NAME}",
         "coverage": {"state": "Assam", "scheme": "ESIC / ESIS"},
+        "auth": "All endpoints except this one require an X-API-Key header",
     }
 
 
-@api_router.get("/meta")
+@read_router.get("/meta")
 async def meta():
     facilities = await all_facilities()
     districts = sorted({f.district for f in facilities})
@@ -96,7 +107,7 @@ async def meta():
 # ---------------- Core black-box endpoint ----------------
 
 
-@api_router.post("/triage", response_model=TriageResponse)
+@write_router.post("/triage", response_model=TriageResponse)
 async def triage(req: TriageRequest):
     started = time.time()
     try:
@@ -149,7 +160,7 @@ async def triage(req: TriageRequest):
 # ---------------- Cases ----------------
 
 
-@api_router.get("/cases", response_model=List[CaseRecord])
+@read_router.get("/cases", response_model=List[CaseRecord])
 async def list_cases(
     urgency: Optional[str] = None,
     q: Optional[str] = None,
@@ -169,7 +180,7 @@ async def list_cases(
     return [CaseRecord.from_mongo(d) for d in docs]
 
 
-@api_router.get("/cases/stats")
+@read_router.get("/cases/stats")
 async def case_stats():
     pipeline = [{"$group": {"_id": "$triage.urgency_level", "count": {"$sum": 1}}}]
     rows = await db.cases.aggregate(pipeline).to_list(20)
@@ -178,7 +189,7 @@ async def case_stats():
     return {"total": total, "by_urgency": counts}
 
 
-@api_router.get("/cases/{case_ref}", response_model=CaseRecord)
+@read_router.get("/cases/{case_ref}", response_model=CaseRecord)
 async def get_case(case_ref: str):
     doc = await db.cases.find_one({"case_ref": case_ref})
     if not doc:
@@ -189,7 +200,7 @@ async def get_case(case_ref: str):
 # ---------------- Facilities ----------------
 
 
-@api_router.get("/facilities", response_model=List[Facility])
+@read_router.get("/facilities", response_model=List[Facility])
 async def list_facilities(
     q: Optional[str] = None,
     district: Optional[str] = None,
@@ -211,7 +222,7 @@ async def list_facilities(
     return [Facility.from_mongo(d) for d in docs]
 
 
-@api_router.get("/facilities/nearest", response_model=List[FacilityWithDistance])
+@read_router.get("/facilities/nearest", response_model=List[FacilityWithDistance])
 async def facilities_nearest(
     latitude: Optional[float] = None,
     longitude: Optional[float] = None,
@@ -252,7 +263,7 @@ CSV_COLUMNS = [
 ]
 
 
-@api_router.post("/facilities/import")
+@write_router.post("/facilities/import")
 async def import_facilities(file: UploadFile = File(...), replace: bool = False):
     raw = (await file.read()).decode("utf-8-sig", errors="replace")
     reader = csv.DictReader(io.StringIO(raw))
@@ -284,7 +295,7 @@ async def import_facilities(file: UploadFile = File(...), replace: bool = False)
     return {"imported": len(rows), "replaced": replace, "errors": errors[:10], "total_facilities": await db.facilities.count_documents({})}
 
 
-@api_router.get("/facilities/export")
+@read_router.get("/facilities/export")
 async def export_facilities():
     facilities = await all_facilities(active_only=False)
     buf = io.StringIO()
@@ -296,13 +307,15 @@ async def export_facilities():
 
 
 app.include_router(api_router)
+app.include_router(read_router)
+app.include_router(write_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=False,
+    allow_origins=[o.strip() for o in os.environ["CORS_ORIGINS"].split(",") if o.strip()],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["X-API-Key", "Content-Type"],
 )
 
 
