@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { api } from "../lib/api";
 
 const inputCls =
-  "rounded-md border border-border/80 bg-background/60 px-3 py-2 text-sm outline-none transition-colors duration-200 focus:border-primary/70";
+  "rounded-md border border-border/80 bg-secondary/50 px-3 py-2 text-sm outline-none transition-colors duration-200 focus:border-primary/70";
 
 export const FacilityDirectory = ({ meta, onImported }) => {
   const [facilities, setFacilities] = useState([]);
@@ -113,7 +113,7 @@ export const FacilityDirectory = ({ meta, onImported }) => {
           <div
             key={f.id}
             data-testid="facility-directory-card"
-            className="rounded-md border border-border/70 bg-background/40 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50"
+            className="rounded-md border border-border/70 bg-secondary/40 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50"
           >
             <p className="flex items-start gap-2 text-sm font-semibold leading-snug">
               <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-primary/80" />

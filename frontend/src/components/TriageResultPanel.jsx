@@ -59,7 +59,7 @@ export const TriageResultPanel = ({ result, loading }) => {
                 {t.call_108 && (
                   <span
                     data-testid="triage-call-108"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-red-500/50 bg-red-500/15 px-3 py-1 text-xs font-bold text-red-300"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-red-300 bg-red-600 px-3 py-1 text-xs font-bold text-white"
                   >
                     <AlertOctagon className="h-3.5 w-3.5" /> CALL 108 NOW
                   </span>
@@ -95,14 +95,14 @@ export const TriageResultPanel = ({ result, loading }) => {
           </div>
 
           {t.red_flags?.length > 0 && (
-            <div className="mt-5 rounded-md border border-red-500/40 bg-red-500/10 p-4">
-              <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-red-300">
+            <div className="mt-5 rounded-md border border-red-200 bg-red-50 p-4">
+              <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-red-700">
                 <ShieldAlert className="h-4 w-4" /> Red flags present
               </p>
-              <ul className="space-y-1.5 text-sm text-red-100/90" data-testid="triage-red-flags-list">
+              <ul className="space-y-1.5 text-sm text-red-900" data-testid="triage-red-flags-list">
                 {t.red_flags.map((f, i) => (
                   <li key={i} className="flex gap-2">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500" />
                     {f}
                   </li>
                 ))}
@@ -164,7 +164,7 @@ export const TriageResultPanel = ({ result, loading }) => {
               <li
                 key={f.id || i}
                 data-testid="facility-card-item"
-                className="group rounded-md border border-border/70 bg-background/40 p-4 transition-colors duration-200 hover:border-primary/50"
+                className="group rounded-md border border-border/70 bg-secondary/40 p-4 transition-colors duration-200 hover:border-primary/50"
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">

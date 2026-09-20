@@ -21,7 +21,7 @@ const EMPTY = {
 };
 
 const inputCls =
-  "w-full rounded-md border border-border/80 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors duration-200 focus:border-primary/70 focus:bg-background";
+  "w-full rounded-md border border-border/80 bg-secondary/50 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors duration-200 focus:border-primary/70 focus:bg-background";
 
 const Field = ({ label, children, className = "" }) => (
   <div className={className}>

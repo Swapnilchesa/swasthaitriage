@@ -4,7 +4,7 @@ import { api } from "../lib/api";
 import { UrgencyBadge } from "./UrgencyBadge";
 
 const inputCls =
-  "rounded-md border border-border/80 bg-background/60 px-3 py-2 text-sm outline-none transition-colors duration-200 focus:border-primary/70";
+  "rounded-md border border-border/80 bg-secondary/50 px-3 py-2 text-sm outline-none transition-colors duration-200 focus:border-primary/70";
 
 export const CaseLogs = ({ refreshKey }) => {
   const [cases, setCases] = useState([]);

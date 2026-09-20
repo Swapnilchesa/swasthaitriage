@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="19" time="48.753" timestamp="2026-09-20T17:04:35.123935+00:00" hostname="agent-env-7a4479ee-6d08-4898-8663-f98b20b39a41"><testcase classname="tests.backend_test.TestTriage" name="test_validation_short_symptom" time="0.302" /><testcase classname="tests.backend_test.TestFacilities" name="test_list_facilities_no_underscore_id" time="0.326" /><testcase classname="tests.backend_test.TestTriage" name="test_triage_no_location_returns_empty_nearest" time="8.005" /><testcase classname="tests.backend_test.TestFacilities" name="test_filter_by_district_jorhat" time="0.135" /><testcase classname="tests.backend_test.TestFacilities" name="test_filter_by_facility_type" time="0.153" /><testcase classname="tests.backend_test.TestFacilities" name="test_search_q_filter" time="0.182" /><testcase classname="tests.backend_test.TestFacilities" name="test_nearest_by_pincode_exact" time="0.134" /><testcase classname="tests.backend_test.TestFacilities" name="test_nearest_unresolvable_returns_422" time="0.126" /><testcase classname="tests.backend_test.TestCases" name="test_list_cases_and_filter" time="0.259" /><testcase classname="tests.backend_test.TestCases" name="test_case_stats" time="0.131" /><testcase classname="tests.backend_test.TestCases" name="test_get_unknown_case_404" time="0.179" /><testcase classname="tests.backend_test.TestCases" name="test_get_existing_case_by_ref" time="0.376" /><testcase classname="tests.backend_test.TestFacilityImport" name="test_import_valid_csv_and_cleanup" time="0.330"><failure message="Failed: Cleanup failed: database names cannot contain the character '&quot;'">backend/tests/backend_test.py:117: in test_import_valid_csv_and_cleanup
+    res = mc[dbname].facilities.delete_many({"name": {"$regex": "^TEST_Facility_Import_"}})
+          ^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/pymongo/mongo_client.py:1597: in __getitem__
+    return database.Database(self, name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/pymongo/database.py:140: in __init__
+    _check_name(name)
+/root/.venv/lib/python3.11/site-packages/pymongo/database.py:66: in _check_name
+    raise InvalidName("database names cannot contain the character %r" % invalid_char)
+E   pymongo.errors.InvalidName: database names cannot contain the character '"'
+
+During handling of the above exception, another exception occurred:
+backend/tests/backend_test.py:120: in test_import_valid_csv_and_cleanup
+    pytest.fail(f"Cleanup failed: {e}")
+E   Failed: Cleanup failed: database names cannot contain the character '"'</failure></testcase><testcase classname="tests.backend_test.TestFacilityImport" name="test_import_missing_columns_returns_400" time="0.164" /><testcase classname="tests.backend_test.TestMeta" name="test_meta_returns_expected_counts" time="0.145"><failure message="AssertionError: expected 36 facilities, got 38&#10;assert 38 == 36">backend/tests/backend_test.py:29: in test_meta_returns_expected_counts
+    assert d["facility_count"] == 36, f"expected 36 facilities, got {d['facility_count']}"
+E   AssertionError: expected 36 facilities, got 38
+E   assert 38 == 36</failure></testcase><testcase classname="tests.backend_test.TestTriage" name="test_triage_district_only_resolves_location" time="9.583" /><testcase classname="tests.backend_test.TestTriage" name="test_triage_chest_pain_hinglish_emergency" time="11.684" /><testcase classname="tests.backend_test.TestTriage" name="test_triage_hindi_fever_urgent_or_routine" time="10.500" /><testcase classname="tests.backend_test.TestTriage" name="test_triage_trivial_not_escalated" time="8.084" /></testsuite></testsuites>

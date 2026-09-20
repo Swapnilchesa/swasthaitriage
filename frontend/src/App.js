@@ -36,12 +36,12 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      <Toaster position="top-right" theme="dark" />
+      <Toaster position="top-right" theme="light" />
 
-      <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-4 px-5 py-3.5 sm:px-8">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/15 ring-1 ring-primary/40">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 ring-1 ring-primary/30">
               <Activity className="h-5 w-5 text-primary" strokeWidth={2.4} />
             </div>
             <div>
@@ -56,18 +56,18 @@ function App() {
             {stats?.total > 0 && (
               <span
                 data-testid="header-case-count"
-                className="mono rounded-full border border-border/70 px-2.5 py-1 text-[11px] text-muted-foreground"
+                className="mono rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground"
               >
                 {stats.total} cases
               </span>
             )}
-            <span className="mono rounded-full border border-border/70 px-2.5 py-1 text-[11px] text-muted-foreground">
+            <span className="mono rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground">
               {meta?.facility_count ?? "—"} facilities
             </span>
             <a
               href="tel:108"
               data-testid="header-emergency-108"
-              className="rounded-full border border-red-500/50 bg-red-500/10 px-3 py-1 text-[11px] font-bold text-red-300 transition-colors duration-200 hover:bg-red-500/20"
+              className="rounded-full border border-red-300 bg-red-50 px-3 py-1 text-[11px] font-bold text-red-700 transition-colors duration-200 hover:bg-red-100"
             >
               Emergency 108
             </a>
@@ -106,7 +106,7 @@ function App() {
       </main>
 
       <footer className="mx-auto max-w-[1500px] px-5 pb-10 sm:px-8">
-        <p className="border-t border-border/60 pt-5 text-[11px] leading-relaxed text-muted-foreground/80">
+        <p className="border-t border-border pt-5 text-[11px] leading-relaxed text-muted-foreground">
           Triage sorting and facility routing only — not a diagnosis, prescription or medical
           advice. Coverage limited to ESIC / ESIS facilities in Assam.
         </p>

@@ -80,8 +80,8 @@ export const DeveloperApi = () => {
               <span
                 className={`mono rounded px-1.5 py-0.5 text-[10px] font-bold ${
                   m === "POST"
-                    ? "bg-emerald-500/15 text-emerald-300"
-                    : "bg-primary/15 text-primary"
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-primary/10 text-primary"
                 }`}
               >
                 {m}
@@ -117,7 +117,7 @@ export const DeveloperApi = () => {
             onChange={(e) => setBody(e.target.value)}
             rows={18}
             spellCheck={false}
-            className="mono mt-4 w-full resize-y rounded-md border border-border/80 bg-background/70 p-3 text-xs leading-relaxed outline-none transition-colors duration-200 focus:border-primary/70"
+            className="mono mt-4 w-full resize-y rounded-md border border-border/80 bg-secondary/50 p-3 text-xs leading-relaxed outline-none transition-colors duration-200 focus:border-primary/70"
           />
           <button
             data-testid="api-playground-curl-output"
@@ -135,8 +135,8 @@ export const DeveloperApi = () => {
               <span
                 className={`mono rounded px-2 py-0.5 text-[11px] font-bold ${
                   resp.status === 200
-                    ? "bg-emerald-500/15 text-emerald-300"
-                    : "bg-red-500/15 text-red-300"
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-red-50 text-red-700"
                 }`}
               >
                 {resp.status} · {resp.ms} ms
@@ -145,7 +145,7 @@ export const DeveloperApi = () => {
           </div>
           <pre
             data-testid="api-playground-response"
-            className="mono mt-4 max-h-[430px] overflow-auto rounded-md border border-border/80 bg-background/70 p-3 text-[11px] leading-relaxed text-foreground/90"
+            className="mono mt-4 max-h-[430px] overflow-auto rounded-md border border-border/80 bg-secondary/50 p-3 text-[11px] leading-relaxed text-foreground/90"
           >
             {resp
               ? JSON.stringify(resp.data, null, 2)
