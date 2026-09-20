@@ -35,6 +35,19 @@ on their location. Multiple applications will eventually call the API directly.
 | GET | `/api/meta` | Districts, pincodes, facility types, duration options |
 
 ## Implemented (2026-06)
+### Security hardening + branding (latest)
+- `X-API-Key` auth on every endpoint except the public `GET /api/` liveness check. Keys are static
+  `label=key` pairs in the `API_KEYS` env var (console / worker-app / partner-app) — delete a pair to
+  revoke that app. Constant-time comparison, only the label is logged, never the key.
+- Per-key fixed-window rate limiting via an atomic Mongo counter with a TTL index:
+  60/min on `POST /api/triage` and `POST /api/facilities/import`, 300/min on read endpoints.
+  Returns 429 + `Retry-After`. Verified isolated per key.
+- CORS restricted to `CORS_ORIGINS` (custom domain + emergent.host + preview + localhost),
+  `allow_credentials=False`, `allow_headers=["X-API-Key","Content-Type"]`.
+- Console authenticates with its own key from `REACT_APP_API_KEY` — no login screen.
+- Link-preview / SEO metadata replaced (title, description, OG + Twitter tags, custom favicon,
+  apple-touch-icon and 1200x630 `og-image.jpg`); all Emergent branding removed from `index.html`.
+- Verified: 30/30 backend tests + full UI regression (testing agent iteration 2).
 - Triage engine with Emergency / Urgent / Routine / Self-care, urgency score, confidence, red flags,
   recommended facility type, caller action, `call_108` flag, follow-up questions, English + Hindi summaries
 - Escalation rules: age <5 / >65, severity 8-10, pregnancy, occupational exposure; guard against over-escalation on vague notes
@@ -46,7 +59,7 @@ on their location. Multiple applications will eventually call the API directly.
 - Verified: 19/19 backend tests + full UI flow (testing agent iteration 1)
 
 ## Backlog
-- P0: API key auth (`TRIAGE_API_KEY` is in `.env` but not yet enforced) + per-app rate limiting
+- P1: rotate API keys to a DB-backed table with an admin UI (currently static env list — revoke needs a redeploy)
 - P1: expand coverage beyond Assam / ESIC; add facility phone numbers and OPD timings
 - P1: real SMS/WhatsApp dispatch of the facility address to the caller (currently copy-to-clipboard)
 - P2: supervisor dashboard (urgency mix over time, agent throughput), case status workflow (dispatched / closed)

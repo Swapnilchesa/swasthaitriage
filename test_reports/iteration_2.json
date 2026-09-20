@@ -1,0 +1,34 @@
+{
+  "summary": "Iteration 2 - full auth/CORS/rate-limit regression. Migrated backend tests to send X-API-Key, added test_auth_and_cors.py (public root, 401 missing key on all protected endpoints, 401 on bad key, per-key acceptance for console/worker-app/partner-app, CORS allowed-vs-disallowed origin preflight) and test_rate_limit.py (temporarily lowered RATE_LIMIT_READ=3, restarted backend, proved 429+Retry-After for one key while a different key still gets 200, then restored RATE_LIMIT_READ=300 and restarted). 30/30 backend pytest cases pass. UI end-to-end still green: header shows 20 cases / 36 facilities (meta call with key works), chest-pain preset -> Emergency result renders, Case logs / Facility directory / API & playground tabs all load without a single 401 in the browser console, playground Send returns 200 payload, and the API tab correctly shows the Authentication card with a masked X-API-Key + Rate limits card + /api/ tagged public.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/test_auth_and_cors.py",
+    "/app/backend/tests/test_rate_limit.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "auth.py Retry-After computation `WINDOW - int(now.timestamp()) % WINDOW` is a reasonable seconds-until-next-window value but slightly off at the exact boundary (returns 60 instead of 0 when timestamp % 60 == 0). Cosmetic.",
+    "server.py still uses deprecated @app.on_event startup/shutdown; migrate to lifespan handlers.",
+    "load_dotenv is called both in auth.py and server.py; harmless but redundant. auth.py reads os.environ['API_KEYS'] at import time - if API_KEYS is missing the module raises KeyError instead of a friendly RuntimeError; consider aligning with the other _parse_keys validation errors.",
+    "rate_limits collection uses a compound-ish string key `{digest}:{limit}:{window}`. If TRIAGE_LIMIT and READ_LIMIT ever share the same numeric value, and both a read and write route are hit in the same window with the same key, they will share a counter. Currently 60 vs 300 so fine, but worth documenting.",
+    "CSV import still has no dedup on (name+pincode); repeated valid imports will bloat facility count (already flagged in iteration 1).",
+    "TriageRequest still has no Field(ge=1, le=10) on severity_reported or age bounds (already flagged)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/conftest.py",
+    "/app/backend/tests/test_auth_and_cors.py",
+    "/app/backend/tests/test_rate_limit.py"
+  ],
+  "success_rate": {"backend": "100% (30/30 including rate-limit isolation)", "frontend": "100% (all 4 tabs + chest-pain preset triage + playground Send, no auth errors)"},
+  "test_credentials": "API_KEYS from /app/backend/.env: console=sk_live_vJjfGTfyHd4u5v-5Et49KQTfzSRzD8gk, worker-app=sk_live_VS1GfKt7zko5TZERBu9rgL-FBz9bmEeo, partner-app=sk_live_g12x2aRMzRq0o73fKG-dTS0_o8uagLeg. Frontend uses REACT_APP_API_KEY (console key).",
+  "seed_data_creation": "CSV import test inserted 2 TEST_Facility_Import_* rows and cleaned them via pymongo. Facility count restored to 36. RATE_LIMIT_READ was temporarily lowered to 3 for isolation test and restored to 300 (backend restarted afterwards, verified live /api/meta returns 200).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend tests live at /app/backend/tests/*.py. Regular run: `pytest /app/backend/tests/backend_test.py /app/backend/tests/test_auth_and_cors.py -v` (finishes in ~25s under xdist, 29 tests). Rate-limit test (test_rate_limit.py) REQUIRES RATE_LIMIT_READ=3 in /app/backend/.env + backend restart, then MUST restore RATE_LIMIT_READ=300 and restart before finishing. conftest.py exports BASE_URL, CONSOLE_KEY, WORKER_KEY, PARTNER_KEY reading from /app/backend/.env directly, so tests don't depend on env vars being exported in the shell.",
+  "rca of the issue": "N/A - all iteration-2 requirements pass. Verified: (1) GET /api/ public 200 with 'auth' note. (2) 401 with NO X-API-Key on /api/meta, /api/facilities, /api/facilities/nearest, /api/facilities/export, /api/cases, /api/cases/stats, /api/cases/{ref}, POST /api/triage, POST /api/facilities/import. (3) Garbage key -> 401 on both GET and POST. (4) All three configured keys (console/worker-app/partner-app) accepted on /api/meta; worker-app also proven on /api/facilities. (5) Per-key rate limit isolation confirmed: with RATE_LIMIT_READ=3, console key hit 429 with Retry-After header after 3 requests, worker-app AND partner-app still returned 200 in the same window. (6) CORS: preflight from https://symptom-intake-box.emergent.host echoes access-control-allow-origin; preflight from https://evil.example.com omits it. (7) No triage regression: chest-pain Hinglish still Emergency + call_108 + red_flags + sorted nearest_facilities; mild headache still Self-care/Routine; symptom_notes<3 with valid key returns 422 (not 401). (8) meta still 18 districts + 36 facilities; facilities returns 'id' not '_id'; nearest?pincode=785004 -> 0.0 km first; unknown case_ref -> 404. (9) CSV import still works, missing columns -> 400. (10) UI unchanged: axios sends X-API-Key from REACT_APP_API_KEY, all tabs + presets + playground work with zero 401s in the console."
+}
