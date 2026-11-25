@@ -64,3 +64,6 @@ on their location. Multiple applications will eventually call the API directly.
 - P1: real SMS/WhatsApp dispatch of the facility address to the caller (currently copy-to-clipboard)
 - P2: supervisor dashboard (urgency mix over time, agent throughput), case status workflow (dispatched / closed)
 - P2: audio intake (Whisper) so the executive can record instead of typing
+
+## Docs
+- 2026-06: Functional & business spec (v1 as-built + v2 severity proposal) at `/app/docs/FUNCTIONAL_AND_BUSINESS_SPEC.md`
